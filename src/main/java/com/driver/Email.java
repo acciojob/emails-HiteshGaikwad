@@ -1,5 +1,7 @@
 package com.driver;
 
+import java.text.ParseException;
+
 public class Email {
 
     private String emailId;
@@ -27,7 +29,7 @@ public class Email {
     }
 
     public void changePassword(String oldPassword, String newPassword){
-        if(oldPassword==this.password){
+        if(oldPassword.equals(this.password)){
             if(checkPassword(newPassword)) {
                 setPassword(newPassword);
             }
