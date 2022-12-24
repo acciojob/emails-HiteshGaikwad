@@ -1,14 +1,13 @@
 package com.driver;
 
 import java.time.LocalTime;
-import java.text.ParseException;
 
 public class Meeting {
 
     private LocalTime startTime;
     private LocalTime endTime;
 
-    public Meeting(LocalTime startTime, LocalTime endTime) throws ParseException{
+    public Meeting(LocalTime startTime, LocalTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
     }

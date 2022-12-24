@@ -1,40 +1,29 @@
 package com.driver;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 
-class Node{
-     Date date;
-     String sender;
-     String message;
-     Node next, prev;
-     Node(Date date, String sender, String message){
-         this.date=date;
-         this.sender=sender;
-         this.message=message;
-     }
- }
 
 public class Gmail extends Email {
 
     int inboxCapacity; //maximum number of mails inbox can store
+
     //Inbox: Stores mails. Each mail has date (Date), sender (String), message (String). It is guaranteed that message is distinct for all mails.
+
+
+    List<Mail> inbox;
+
     //Trash: Stores mails. Each mail has date (Date), sender (String), message (String)
+    List<Mail> trash;
 
-        Node head = new Node(new SimpleDateFormat("dd/MM/yyyy").parse("00/00/0000"), null, null);
-        Node tail = new Node(new SimpleDateFormat("dd/MM/yyyy").parse("00/00/0000"), null, null);
+    public Gmail(String emailId, int inboxCapacity) {
 
-    HashMap<String,Node> storage=new HashMap<>(this.inboxCapacity);
-    HashMap<String,Node> trashStorage=new HashMap<>();
-
-    public Gmail(String emailId, int inboxCapacity) throws ParseException {
         super(emailId);
-        this.inboxCapacity=inboxCapacity;
-        head.next=tail;
-        tail.prev=head;
+        this.inboxCapacity = inboxCapacity;
+        this.inbox = new ArrayList<>();
+        this.trash = new ArrayList<>();
     }
 
     public void receiveMail(Date date, String sender, String message){
@@ -42,87 +31,87 @@ public class Gmail extends Email {
         // It is guaranteed that:
         // 1. Each mail in the inbox is distinct.
         // 2. The mails are received in non-decreasing order. This means that the date of a new mail is greater than equal to the dates of mails received already.
-        Node newNode=new Node(date,sender,message);
-        if(!storage.containsKey(newNode.message)){
-            storage.put(newNode.message,newNode);
-            Node nextNode=head.next;
-            head.next=newNode;
-            newNode.next=nextNode;
-
-            newNode.prev=head;
-            nextNode.prev=newNode;
+        if(getInboxSize()==getInboxCapacity()) {
+            trash.add(inbox.remove(0));
         }
+        Mail newMail = new Mail(date,sender,message);
+        inbox.add(newMail);
     }
 
     public void deleteMail(String message){
         // Each message is distinct
         // If the given message is found in any mail in the inbox, move the mail to trash, else do nothing
-        if(storage.containsKey(message)){
-            delete(storage.get(message));
-            storage.remove(message);
+        for(Mail mail : inbox) {
+            if(mail.message.equals(message)) {
+                trash.add(mail);
+                inbox.remove(mail);
+                break;
+            }
         }
-    }
-
-    // new method to delete node from linkedList
-    public void delete(Node node){
-        Node nextNode=node.next;
-        Node prevNode=node.prev;
-        prevNode.next=nextNode;
-        nextNode.prev=prevNode;
     }
 
     public String findLatestMessage(){
         // If the inbox is empty, return null
         // Else, return the message of the latest mail present in the inbox
-        if(storage.size()==0){
+        if(getInboxSize()==0) {
             return null;
-        }else{
-            return head.next.message;
         }
+        return inbox.get(inbox.size()-1).message;
     }
 
     public String findOldestMessage(){
         // If the inbox is empty, return null
         // Else, return the message of the oldest mail present in the inbox
-        if(storage.size()==0){
+        if(getInboxSize()==0) {
             return null;
-        }else{
-            return tail.prev.message;
         }
+        return inbox.get(0).message;
     }
 
     public int findMailsBetweenDates(Date start, Date end){
         //find number of mails in the inbox which are received between given dates
         //It is guaranteed that start date <= end date
-        int countMails=0;
-        for(Node node: storage.values()){
-            if(node.date.compareTo(start)==0 || node.date.compareTo(end)==0){
-                countMails++;
+        int count = 0;
+        for(Mail mail : inbox) {
+            if(mail.date.after(end)) {
+                return count;
             }
-            else if(node.date.compareTo(start)>0 && node.date.compareTo(end)<0){
-                countMails++;
+            else if(mail.date.before(start)) continue;
+            else {
+                count++;
             }
         }
-        return countMails;
+        return count;
     }
 
     public int getInboxSize(){
         // Return number of mails in inbox
-        return storage.size();
+        return inbox.size();
     }
 
     public int getTrashSize(){
         // Return number of mails in Trash
-        return trashStorage.size();
+        return trash.size();
     }
 
     public void emptyTrash(){
         // clear all mails in the trash
-        trashStorage.clear();
+        trash.clear();
     }
 
     public int getInboxCapacity() {
         // Return the maximum number of mails that can be stored in the inbox
-        return inboxCapacity;
+        return this.inboxCapacity;
+    }
+
+    class Mail {
+        public String message;
+        public Date date;
+        public String sender;
+        Mail(Date date, String sender, String message) {
+            this.message = message;
+            this.date = date;
+            this.sender = sender;
+        }
     }
 }
