@@ -7,7 +7,7 @@ public class Email {
     private String emailId;
     private String password;
 
-    public Email(String emailId){
+    public Email(String emailId) throws ParseException{
         this.emailId = emailId;
         this.password = "Accio@123";
     }

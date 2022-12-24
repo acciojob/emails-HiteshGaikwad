@@ -14,13 +14,10 @@ import static java.util.Collections.*;
 
 public class Workspace extends Gmail{
 
-     ArrayList<Meeting> calendar; // Stores all the meetings
+      ArrayList<Meeting> calendar; // Stores all the meetings
 
     HashSet<Meeting> hs=new HashSet<>();
 
-//    public void setCalendar(ArrayList<Meeting> calendar) {
-//        this.calendar = calendar;
-//    }
 
     public Workspace(String emailId) throws ParseException {
         super(emailId,2147483647);
@@ -32,7 +29,7 @@ public class Workspace extends Gmail{
 
     public void addMeeting(Meeting meeting){
         //add the meeting to calendar
-        calendar.add(meeting);
+            calendar.add(meeting);
     }
 
     public int findMaxMeetings(){
