@@ -8,7 +8,7 @@ public class Meeting {
     private LocalTime startTime;
     private LocalTime endTime;
 
-    public Meeting(LocalTime startTime, LocalTime endTime){
+    public Meeting(LocalTime startTime, LocalTime endTime) throws ParseException{
         this.startTime = startTime;
         this.endTime = endTime;
     }
